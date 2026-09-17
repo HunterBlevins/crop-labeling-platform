@@ -1,0 +1,758 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+
+  color: #202124;
+
+  background: #f4f5f7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* ============================================= */
+/* APP                                           */
+/* ============================================= */
+
+#app {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ============================================= */
+/* HEADER                                        */
+/* ============================================= */
+
+#header {
+  height: 62px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  padding: 0 22px;
+
+  background: white;
+
+  border-bottom: 1px solid #d4d8dc;
+
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06);
+
+  z-index: 20;
+}
+
+
+#title {
+  margin: 0;
+
+  margin-right: 30px;
+
+  font-size: 19px;
+
+  font-weight: 650;
+
+  letter-spacing: -0.02em;
+
+  color: #17191b;
+
+  white-space: nowrap;
+}
+
+
+#countrySelect {
+  min-width: 190px;
+
+  padding: 9px 34px 9px 12px;
+
+  font-size: 14px;
+
+  color: #25292d;
+
+  background-color: #f8f9fa;
+
+  border: 1px solid #bfc5ca;
+
+  border-radius: 6px;
+
+  outline: none;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+
+#countrySelect:hover {
+  background: white;
+
+  border-color: #929aa2;
+}
+
+
+#countrySelect:focus {
+  background: white;
+
+  border-color: #0079c1;
+
+  box-shadow:
+    0 0 0 3px rgba(0, 121, 193, 0.12);
+}
+
+
+/* ============================================= */
+/* WORKSPACE                                     */
+/* ============================================= */
+
+#workspace {
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+
+  background: #f4f5f7;
+}
+
+
+/* ============================================= */
+/* LEFT PANEL                                    */
+/* ============================================= */
+
+#leftPanel {
+  width: 250px;
+
+  min-width: 180px;
+
+  max-width: 500px;
+
+  flex-shrink: 0;
+
+  padding: 18px 14px;
+
+  background: white;
+
+  border-right: 1px solid #d4d8dc;
+
+  overflow-y: auto;
+
+  z-index: 10;
+
+  resize: horizontal;
+}
+
+
+#leftPanel h3 {
+  margin: 2px 6px 12px 6px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.06em;
+
+  color: #42484e;
+}
+
+
+/* ============================================= */
+/* LAYER SECTION TITLE                           */
+/* ============================================= */
+
+.layer-section-title {
+  margin: 18px 6px 6px 6px;
+
+  padding-bottom: 7px;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.07em;
+
+  color: #555d64;
+
+  border-bottom: 1px solid #e1e4e7;
+}
+
+
+/* ============================================= */
+/* LAYER TOGGLES                                 */
+/* ============================================= */
+
+.layer-toggle {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  width: 100%;
+
+  padding: 8px;
+
+  margin: 2px 0;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  user-select: none;
+
+  font-size: 13px;
+
+  font-weight: 500;
+
+  color: #292e33;
+
+  transition:
+    background 0.12s ease,
+    color 0.12s ease;
+}
+
+
+.layer-toggle:hover {
+  background: #f0f2f4;
+
+  color: #111416;
+}
+
+
+.layer-toggle input {
+  width: 15px;
+
+  height: 15px;
+
+  margin: 0;
+
+  accent-color: #0079c1;
+
+  cursor: pointer;
+}
+
+
+/* ============================================= */
+/* MAP                                           */
+/* ============================================= */
+
+#map {
+  position: relative;
+
+  flex: 1;
+
+  min-width: 300px;
+
+  min-height: 0;
+
+  background: #e9ecef;
+}
+
+
+/* ============================================= */
+/* RIGHT PANEL                                   */
+/* ============================================= */
+
+#rightPanel {
+  width: 300px;
+
+  min-width: 240px;
+
+  max-width: 500px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
+
+  min-height: 0;
+
+  background: white;
+
+  border-left: 1px solid #d4d8dc;
+}
+
+
+/* ============================================= */
+/* SELECTED FEATURE AREA                         */
+/* ============================================= */
+
+#featureInfo {
+  flex-shrink: 0;
+
+  padding: 16px;
+
+  background: white;
+
+  border-bottom: 1px solid #d4d8dc;
+}
+
+
+/* ============================================= */
+/* NO FEATURE SELECTED                           */
+/* ============================================= */
+
+.no-feature-selected {
+  color: #555d64;
+}
+
+
+.no-feature-selected h3 {
+  margin: 0 0 7px 0;
+
+  font-size: 14px;
+
+  font-weight: 650;
+
+  color: #30353a;
+}
+
+
+.no-feature-selected p {
+  margin: 0;
+
+  font-size: 13px;
+
+  line-height: 1.45;
+
+  color: #555d64;
+}
+
+
+/* ============================================= */
+/* SELECTED FEATURE                              */
+/* ============================================= */
+
+.selected-feature {
+  padding: 0;
+}
+
+
+.feature-id {
+  font-size: 10px;
+
+  font-weight: 700;
+
+  color: #555d64;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+
+  margin-bottom: 3px;
+}
+
+
+.feature-object-id {
+  font-size: 23px;
+
+  font-weight: 650;
+
+  letter-spacing: -0.02em;
+
+  color: #17191b;
+
+  margin-bottom: 16px;
+}
+
+
+/* ============================================= */
+/* CROP LABEL                                    */
+/* ============================================= */
+
+.crop-label-title {
+  font-size: 11px;
+
+  font-weight: 700;
+
+  color: #555d64;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.06em;
+
+  margin-bottom: 8px;
+}
+
+
+.crop-label-options {
+  display: flex;
+
+  gap: 6px;
+}
+
+
+.crop-label-option {
+  flex: 1;
+}
+
+
+.crop-label-option input {
+  display: none;
+}
+
+
+.crop-label-option span {
+  display: block;
+
+  text-align: center;
+
+  padding: 8px 4px;
+
+  border: 1px solid #c3c8cd;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  color: #363c41;
+
+  background: #f7f8f9;
+
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease,
+    transform 0.08s ease;
+}
+
+
+.crop-label-option span:hover {
+  background: #eceff1;
+
+  border-color: #aab1b7;
+}
+
+
+.crop-label-option span:active {
+  transform: scale(0.98);
+}
+
+
+.crop-label-option input:checked + span {
+  background: #e4f1f8;
+
+  border-color: #0079c1;
+
+  color: #005f91;
+
+  font-weight: 700;
+}
+
+
+/* ============================================= */
+/* SAVE STATUS                                   */
+/* ============================================= */
+
+#saveStatus {
+  margin-top: 8px;
+
+  min-height: 18px;
+
+  font-size: 12px;
+
+  color: #555d64;
+}
+
+
+/* ============================================= */
+/* POINT LIST CONTAINER                          */
+/* ============================================= */
+
+#pointListContainer {
+  flex: 1;
+
+  min-height: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+
+/* ============================================= */
+/* POINT LIST HEADER                             */
+/* ============================================= */
+
+.point-list-header {
+  flex-shrink: 0;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 11px 14px;
+
+  background: #f5f6f7;
+
+  border-bottom: 1px solid #dfe2e5;
+}
+
+
+.point-list-header h3 {
+  margin: 0;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.05em;
+
+  color: #42484e;
+}
+
+
+#pointCount {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-width: 24px;
+
+  height: 20px;
+
+  padding: 0 6px;
+
+  border-radius: 10px;
+
+  background: #e1e5e8;
+
+  color: #41474c;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+
+/* ============================================= */
+/* POINT LIST                                    */
+/* ============================================= */
+
+#pointList {
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+
+  overflow-x: hidden;
+}
+
+
+#pointList::-webkit-scrollbar,
+#leftPanel::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+#pointList::-webkit-scrollbar-track,
+#leftPanel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+#pointList::-webkit-scrollbar-thumb,
+#leftPanel::-webkit-scrollbar-thumb {
+  background: #c1c6ca;
+
+  border-radius: 10px;
+}
+
+
+#pointList::-webkit-scrollbar-thumb:hover,
+#leftPanel::-webkit-scrollbar-thumb:hover {
+  background: #9da4aa;
+}
+
+
+/* ============================================= */
+/* POINT ROW                                     */
+/* ============================================= */
+
+.point-row {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  align-items: center;
+
+  width: 100%;
+
+  min-height: 43px;
+
+  padding: 0 12px;
+
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+
+  cursor: pointer;
+
+  transition:
+    filter 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+
+.point-row:hover {
+  filter: brightness(0.96);
+}
+
+
+.point-objectid {
+  padding: 8px 4px;
+
+  font-size: 13px;
+
+  font-weight: 650;
+
+  color: #292e33;
+}
+
+
+.point-label {
+  padding: 8px 4px;
+
+  text-align: right;
+
+  font-size: 10px;
+
+  font-weight: 750;
+
+  letter-spacing: 0.05em;
+
+  text-transform: uppercase;
+
+  color: #3d444a;
+}
+
+
+/* ============================================= */
+/* POINT COLORS                                  */
+/* ============================================= */
+
+.point-row.label-yes {
+  background: #e1f1e6;
+}
+
+
+.point-row.label-no {
+  background: #f7dfdd;
+}
+
+
+.point-row.label-review {
+  background: #ffefd2;
+}
+
+
+.point-row.label-empty {
+  background: #eeeeef;
+}
+
+
+/* ============================================= */
+/* SELECTED POINT                                */
+/* ============================================= */
+
+.point-row.selected-point {
+  outline: 2px solid #0079c1;
+
+  outline-offset: -2px;
+
+  box-shadow:
+    inset 4px 0 0 #0079c1;
+
+  font-weight: 700;
+}
+
+
+/* ============================================= */
+/* EMPTY POINT LIST                              */
+/* ============================================= */
+
+.point-list-empty {
+  padding: 20px 16px;
+
+  color: #555d64;
+
+  font-size: 13px;
+
+  text-align: center;
+}
+
+
+/* ============================================= */
+/* MISC                                          */
+/* ============================================= */
+
+hr {
+  border: 0;
+
+  border-top: 1px solid #dfe2e5;
+
+  margin: 0;
+}
+
+
+/* ============================================= */
+/* EDITOR                                        */
+/* ============================================= */
+
+#editorContainer {
+  position: absolute;
+
+  top: 15px;
+
+  left: 15px;
+
+  z-index: 5;
+
+  max-height: calc(100% - 30px);
+
+  overflow-y: auto;
+
+  filter:
+    drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
+}

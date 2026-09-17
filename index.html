@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Satlabel Squad</title>
+</head>
+
+<body>
+
+  <div id="app">
+
+    <header id="header">
+
+      <div id="title">
+        <strong>
+          SatLabel Squad
+        </strong>
+      </div>
+
+      <select id="countrySelect">
+
+        <option value="">
+          Select country...
+        </option>
+
+      </select>
+
+    </header>
+
+
+    <div id="workspace">
+
+
+      <!-- LEFT SIDE -->
+
+      <aside id="leftPanel">
+
+        <h3>
+          Layers
+        </h3>
+
+        <div id="layerList">
+
+          <p>
+            Select a country.
+          </p>
+
+        </div>
+
+      </aside>
+
+
+      <!-- MAP -->
+
+      <main id="map">
+
+        <div id="editorContainer"></div>
+
+      </main>
+
+
+      <!-- RIGHT SIDE -->
+
+      <aside id="rightPanel">
+
+  <!-- ========================================= -->
+  <!-- FIXED FEATURE / CROP LABEL AREA -->
+  <!-- ========================================= -->
+
+  <div id="featureInfo">
+
+    <div class="no-feature-selected">
+
+      <h3>Feature</h3>
+
+      <p>
+        Click a point to select it.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================= -->
+  <!-- SCROLLABLE POINT LIST -->
+  <!-- ========================================= -->
+
+  <div id="pointListContainer">
+
+    <div class="point-list-header">
+
+      <h3>Points</h3>
+
+      <span id="pointCount"></span>
+
+    </div>
+
+    <div id="pointList">
+
+      <p class="point-list-empty">
+        Select a country.
+      </p>
+
+    </div>
+
+  </div>
+
+</aside>
+
+
+    </div>
+
+  </div>
+
+
+  <script
+    type="module"
+    src="/src/main.ts"
+  ></script>
+
+</body>
+
+</html>
