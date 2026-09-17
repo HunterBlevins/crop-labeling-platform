@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "/crop-labeling-platform/"
+  base: "/satlabel_labeling/"
 });
