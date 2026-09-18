@@ -8,29 +8,23 @@ export let map: Map;
 export let view: MapView;
 
 export const currentLayers = {
-
   fields: null as any,
-
   points: null as any,
 
-  // All imagery layers, including Planet and Wayback
   imagery: [] as any[],
 
-  // Planet group layer
   planetGroup: null as any,
-
-  // Individual Planet monthly layers
   planetLayers: [] as any[],
 
-  // Wayback layers
   waybackLayers: [] as any[]
-
 };
 
 
 export async function createMap() {
 
-  console.log("Creating map...");
+  console.log(
+    "Creating map..."
+  );
 
 
   // ============================================================
@@ -85,6 +79,13 @@ export async function createMap() {
 
 
   // ============================================================
+  // NORTH ARROW
+  // ============================================================
+
+  createNorthArrow();
+
+
+  // ============================================================
   // RIGHT-CLICK TO COPY COORDINATES
   // ============================================================
 
@@ -93,6 +94,7 @@ export async function createMap() {
     async (event) => {
 
       // Only respond to right-click
+
       if (
         event.button !== 2
       ) {
@@ -168,6 +170,277 @@ export async function createMap() {
 
 
   return view;
+
+}
+
+
+// ============================================================
+// NORTH ARROW
+// ============================================================
+
+function createNorthArrow() {
+
+  // ----------------------------------------------
+  // Remove an existing arrow if one already exists
+  // ----------------------------------------------
+
+  const existing =
+    document.getElementById(
+      "north-arrow"
+    );
+
+
+  if (
+    existing
+  ) {
+
+    existing.remove();
+
+  }
+
+
+  // ----------------------------------------------
+  // CREATE NORTH ARROW
+  // ----------------------------------------------
+
+  const northArrow =
+    document.createElement(
+      "button"
+    );
+
+
+  northArrow.id =
+    "north-arrow";
+
+
+  northArrow.type =
+    "button";
+
+
+  northArrow.title =
+    "Reset map orientation to north";
+
+
+  northArrow.setAttribute(
+    "aria-label",
+    "Reset map orientation to north"
+  );
+
+
+  // ----------------------------------------------
+  // ARROW SYMBOL
+  // ----------------------------------------------
+
+  northArrow.innerHTML = `
+
+    <div class="north-arrow-symbol">
+
+      <div class="north-arrow-letter">
+        N
+      </div>
+
+      <div class="north-arrow-shape">
+        ▲
+      </div>
+
+    </div>
+
+  `;
+
+
+  // ----------------------------------------------
+  // POSITION
+  // ----------------------------------------------
+
+  northArrow.style.position =
+    "absolute";
+
+
+  northArrow.style.top =
+    "15px";
+
+
+  northArrow.style.right =
+    "15px";
+
+
+  // ----------------------------------------------
+  // SIZE
+  // ----------------------------------------------
+
+  northArrow.style.width =
+    "46px";
+
+
+  northArrow.style.height =
+    "46px";
+
+
+  // ----------------------------------------------
+  // APPEARANCE
+  // ----------------------------------------------
+
+  northArrow.style.background =
+    "rgba(255, 255, 255, 0.95)";
+
+
+  northArrow.style.border =
+    "1px solid rgba(0, 0, 0, 0.25)";
+
+
+  northArrow.style.borderRadius =
+    "6px";
+
+
+  northArrow.style.boxShadow =
+    "0 1px 4px rgba(0, 0, 0, 0.3)";
+
+
+  northArrow.style.cursor =
+    "pointer";
+
+
+  northArrow.style.padding =
+    "0";
+
+
+  northArrow.style.zIndex =
+    "100";
+
+
+  northArrow.style.display =
+    "flex";
+
+
+  northArrow.style.alignItems =
+    "center";
+
+
+  northArrow.style.justifyContent =
+    "center";
+
+
+  // ----------------------------------------------
+  // ARROW CONTENT
+  // ----------------------------------------------
+
+  const arrowSymbol =
+    northArrow.querySelector(
+      ".north-arrow-symbol"
+    ) as HTMLElement;
+
+
+  if (
+    arrowSymbol
+  ) {
+
+    arrowSymbol.style.display =
+      "flex";
+
+
+    arrowSymbol.style.flexDirection =
+      "column";
+
+
+    arrowSymbol.style.alignItems =
+      "center";
+
+
+    arrowSymbol.style.justifyContent =
+      "center";
+
+
+    arrowSymbol.style.lineHeight =
+      "1";
+
+  }
+
+
+  const northLetter =
+    northArrow.querySelector(
+      ".north-arrow-letter"
+    ) as HTMLElement;
+
+
+  if (
+    northLetter
+  ) {
+
+    northLetter.style.fontSize =
+      "11px";
+
+
+    northLetter.style.fontWeight =
+      "700";
+
+
+    northLetter.style.marginBottom =
+      "1px";
+
+  }
+
+
+  const arrowShape =
+    northArrow.querySelector(
+      ".north-arrow-shape"
+    ) as HTMLElement;
+
+
+  if (
+    arrowShape
+  ) {
+
+    arrowShape.style.fontSize =
+      "19px";
+
+
+    arrowShape.style.lineHeight =
+      "16px";
+
+  }
+
+
+  // ----------------------------------------------
+  // CLICK
+  // ----------------------------------------------
+
+  northArrow.addEventListener(
+    "click",
+    () => {
+
+      // Reset the map orientation to north.
+
+      // We intentionally set rotation directly
+      // instead of using view.goTo(), because
+      // rotation is a property of MapView rather
+      // than a GoToTarget2D geometry.
+
+      view.rotation =
+        0;
+
+    }
+  );
+
+
+  // ----------------------------------------------
+  // ADD TO MAP CONTAINER
+  // ----------------------------------------------
+
+  const mapContainer =
+    document.getElementById(
+      "map"
+    );
+
+
+  if (
+    mapContainer
+  ) {
+
+    mapContainer.appendChild(
+      northArrow
+    );
+
+  }
 
 }
 
