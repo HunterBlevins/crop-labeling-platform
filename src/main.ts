@@ -1,14 +1,29 @@
 import "./style.css";
 
 import { signIn } from "./auth";
-import { createMap, view, currentLayers } from "./map";
-import { loadCountry } from "./country";
-import { COUNTRIES } from "./config";
+
+import {
+  createMap,
+  view,
+  currentLayers
+} from "./map";
+
+import {
+  loadCountry
+} from "./country";
+
+import {
+  COUNTRIES
+} from "./config";
 
 import Editor from "@arcgis/core/widgets/Editor";
+
 import Graphic from "@arcgis/core/Graphic";
 
-console.log("MAIN.TS HAS STARTED");
+
+console.log(
+  "MAIN.TS HAS STARTED"
+);
 
 
 // ==================================================
@@ -19,8 +34,14 @@ async function startApp() {
 
   try {
 
-    console.log("Starting application...");
-    console.log("startApp() HAS STARTED");
+    console.log(
+      "Starting application..."
+    );
+
+
+    console.log(
+      "startApp() HAS STARTED"
+    );
 
 
     // ----------------------------------------------
@@ -28,6 +49,7 @@ async function startApp() {
     // ----------------------------------------------
 
     await signIn();
+
 
     console.log(
       "Successfully signed in to ArcGIS Online!"
@@ -39,6 +61,7 @@ async function startApp() {
     // ----------------------------------------------
 
     await createMap();
+
 
     console.log(
       "Map created."
@@ -55,7 +78,9 @@ async function startApp() {
       ) as HTMLSelectElement;
 
 
-    if (!countrySelect) {
+    if (
+      !countrySelect
+    ) {
 
       throw new Error(
         "countrySelect element was not found."
@@ -69,9 +94,11 @@ async function startApp() {
     // ----------------------------------------------
 
     countrySelect.innerHTML = `
+
       <option value="">
         Select country...
       </option>
+
     `;
 
 
@@ -118,7 +145,9 @@ async function startApp() {
           countrySelect.value;
 
 
-        if (!country) {
+        if (
+          !country
+        ) {
 
           return;
 
@@ -273,6 +302,7 @@ async function startApp() {
             feature
           );
 
+
         } catch (error) {
 
           console.error(
@@ -310,7 +340,9 @@ function buildLayerPanel() {
     );
 
 
-  if (!panel) {
+  if (
+    !panel
+  ) {
 
     return;
 
@@ -422,12 +454,12 @@ function buildLayerPanel() {
 
 
   // ==================================================
-  // PLANET MONTHLY IMAGERY
+  // IMAGERY SECTION
   // ==================================================
 
   if (
-    currentLayers.imagery &&
-    currentLayers.imagery.length > 0
+    currentLayers.planetGroup ||
+    currentLayers.waybackLayers.length > 0
   ) {
 
     // ----------------------------------------------
@@ -445,7 +477,7 @@ function buildLayerPanel() {
 
 
     imageryHeading.textContent =
-      "Planet Monthly Imagery";
+      "Imagery";
 
 
     panel.appendChild(
@@ -453,32 +485,29 @@ function buildLayerPanel() {
     );
 
 
-    // ----------------------------------------------
-    // CREATE ONE TOGGLE PER MONTH
-    //
-    // REVERSED SO NEWEST MONTH IS ON TOP
-    // ----------------------------------------------
+    // ==================================================
+    // WAYBACK IMAGERY
+    // ==================================================
 
-    [
-      ...currentLayers.imagery
-    ].reverse().forEach(
+    // Wayback intentionally appears ABOVE Planet.
 
+    currentLayers.waybackLayers.forEach(
       (
-        imageryLayer: any,
+        waybackLayer: any,
         index: number
       ) => {
 
         const row =
           createLayerToggle(
 
-            `planetLayer-${index}`,
+            `waybackLayer-${index}`,
 
-            imageryLayer.title.replace(
-              "Planet - ",
+            `Wayback - ${waybackLayer.title.replace(
+              "Wayback - ",
               ""
-            ),
+            )}`,
 
-            imageryLayer.visible
+            waybackLayer.visible
 
           );
 
@@ -498,17 +527,805 @@ function buildLayerPanel() {
           "change",
           () => {
 
-            imageryLayer.visible =
+            waybackLayer.visible =
               checkbox.checked;
 
           }
         );
 
       }
-
     );
 
+
+    // ==================================================
+    // PLANET GROUP
+    // ==================================================
+
+    if (
+      currentLayers.planetGroup &&
+      currentLayers.planetLayers.length > 0
+    ) {
+
+      buildPlanetControls(
+        panel
+      );
+
+    }
+
   }
+
+}
+
+
+// ==================================================
+// PLANET CONTROLS
+// ==================================================
+
+function buildPlanetControls(
+  panel: HTMLElement
+) {
+
+  const planetGroup =
+    currentLayers.planetGroup;
+
+
+  const planetLayers =
+    currentLayers.planetLayers;
+
+
+  if (
+    !planetGroup ||
+    planetLayers.length === 0
+  ) {
+
+    return;
+
+  }
+
+
+  // ==================================================
+  // MAIN PLANET HEADER
+  // ==================================================
+
+  const planetHeader =
+    document.createElement(
+      "div"
+    );
+
+
+  planetHeader.className =
+    "planet-group-header";
+
+
+  planetHeader.style.display =
+    "flex";
+
+
+  planetHeader.style.alignItems =
+    "center";
+
+
+  planetHeader.style.gap =
+    "6px";
+
+
+  planetHeader.style.width =
+    "100%";
+
+
+  // ----------------------------------------------
+  // COLLAPSE BUTTON
+  // ----------------------------------------------
+
+  const collapseButton =
+    document.createElement(
+      "button"
+    );
+
+
+  collapseButton.type =
+    "button";
+
+
+  collapseButton.textContent =
+    "▼";
+
+
+  collapseButton.className =
+    "planet-collapse-button";
+
+
+  collapseButton.style.border =
+    "none";
+
+
+  collapseButton.style.background =
+    "transparent";
+
+
+  collapseButton.style.cursor =
+    "pointer";
+
+
+  collapseButton.style.padding =
+    "2px 4px";
+
+
+  collapseButton.style.fontSize =
+    "12px";
+
+
+  // ----------------------------------------------
+  // PLANET CHECKBOX
+  // ----------------------------------------------
+
+  const planetCheckbox =
+    document.createElement(
+      "input"
+    );
+
+
+  planetCheckbox.type =
+    "checkbox";
+
+
+  planetCheckbox.id =
+    "planetGroupCheckbox";
+
+
+  planetCheckbox.checked =
+    planetGroup.visible;
+
+
+  // ----------------------------------------------
+  // PLANET LABEL
+  // ----------------------------------------------
+
+  const planetLabel =
+    document.createElement(
+      "label"
+    );
+
+
+  planetLabel.htmlFor =
+    "planetGroupCheckbox";
+
+
+  planetLabel.textContent =
+    "Planet Monthly Imagery";
+
+
+  planetLabel.style.cursor =
+    "pointer";
+
+
+  planetLabel.style.flex =
+    "1";
+
+
+  // ----------------------------------------------
+  // BUILD HEADER
+  // ----------------------------------------------
+
+  planetHeader.appendChild(
+    collapseButton
+  );
+
+
+  planetHeader.appendChild(
+    planetCheckbox
+  );
+
+
+  planetHeader.appendChild(
+    planetLabel
+  );
+
+
+  panel.appendChild(
+    planetHeader
+  );
+
+
+  // ==================================================
+  // PLANET CONTENT
+  // ==================================================
+
+  const planetContent =
+    document.createElement(
+      "div"
+    );
+
+
+  planetContent.className =
+    "planet-group-content";
+
+
+  planetContent.style.marginLeft =
+    "22px";
+
+
+  panel.appendChild(
+    planetContent
+  );
+
+
+  // ==================================================
+  // COLLAPSE / EXPAND
+  // ==================================================
+
+  collapseButton.addEventListener(
+    "click",
+    () => {
+
+      const isCollapsed =
+        planetContent.style.display ===
+        "none";
+
+
+      if (
+        isCollapsed
+      ) {
+
+        planetContent.style.display =
+          "";
+
+        collapseButton.textContent =
+          "▼";
+
+      }
+
+      else {
+
+        planetContent.style.display =
+          "none";
+
+        collapseButton.textContent =
+          "▶";
+
+      }
+
+    }
+  );
+
+
+  // ==================================================
+  // MAIN PLANET VISIBILITY
+  // ==================================================
+
+  planetCheckbox.addEventListener(
+    "change",
+    () => {
+
+      planetGroup.visible =
+        planetCheckbox.checked;
+
+    }
+  );
+
+
+  // ==================================================
+  // MONTH LABEL
+  // ==================================================
+
+  const selectedMonthLabel =
+    document.createElement(
+      "div"
+    );
+
+
+  selectedMonthLabel.className =
+    "planet-selected-month";
+
+
+  selectedMonthLabel.style.fontWeight =
+    "600";
+
+
+  selectedMonthLabel.style.margin =
+    "8px 0 4px 0";
+
+
+  selectedMonthLabel.textContent =
+    getPlanetMonthName(
+      planetLayers,
+      getVisiblePlanetIndex(
+        planetLayers
+      )
+    );
+
+
+  planetContent.appendChild(
+    selectedMonthLabel
+  );
+
+
+  // ==================================================
+  // SLIDER
+  // ==================================================
+
+  const slider =
+    document.createElement(
+      "input"
+    );
+
+
+  slider.type =
+    "range";
+
+
+  slider.min =
+    "0";
+
+
+  slider.max =
+    String(
+      planetLayers.length - 1
+    );
+
+
+  slider.step =
+    "1";
+
+
+  slider.value =
+    String(
+      getVisiblePlanetIndex(
+        planetLayers
+      )
+    );
+
+
+  slider.style.width =
+    "100%";
+
+
+  slider.title =
+    "Move through Planet monthly imagery";
+
+
+  planetContent.appendChild(
+    slider
+  );
+
+
+  // ==================================================
+  // SLIDER DATE RANGE
+  // ==================================================
+
+  const sliderLabels =
+    document.createElement(
+      "div"
+    );
+
+
+  sliderLabels.style.display =
+    "flex";
+
+
+  sliderLabels.style.justifyContent =
+    "space-between";
+
+
+  sliderLabels.style.fontSize =
+    "11px";
+
+
+  sliderLabels.style.opacity =
+    "0.75";
+
+
+  const firstMonth =
+    document.createElement(
+      "span"
+    );
+
+
+  firstMonth.textContent =
+    getPlanetMonthName(
+      planetLayers,
+      0
+    );
+
+
+  const lastMonth =
+    document.createElement(
+      "span"
+    );
+
+
+  lastMonth.textContent =
+    getPlanetMonthName(
+      planetLayers,
+      planetLayers.length - 1
+    );
+
+
+  sliderLabels.appendChild(
+    firstMonth
+  );
+
+
+  sliderLabels.appendChild(
+    lastMonth
+  );
+
+
+  planetContent.appendChild(
+    sliderLabels
+  );
+
+
+  // ==================================================
+  // SLIDER CHANGE
+  // ==================================================
+
+  slider.addEventListener(
+    "input",
+    () => {
+
+      const index =
+        Number(
+          slider.value
+        );
+
+
+      // Turn every Planet month off
+
+      planetLayers.forEach(
+        (
+          layer: any,
+          layerIndex: number
+        ) => {
+
+          layer.visible =
+            layerIndex === index;
+
+        }
+      );
+
+
+      // Make sure the group is on
+
+      planetGroup.visible =
+        true;
+
+
+      planetCheckbox.checked =
+        true;
+
+
+      // Update selected month text
+
+      selectedMonthLabel.textContent =
+        getPlanetMonthName(
+          planetLayers,
+          index
+        );
+
+
+      // Update individual checkboxes
+
+      updatePlanetMonthCheckboxes(
+        planetContent,
+        planetLayers
+      );
+
+    }
+  );
+
+
+  // ==================================================
+  // MONTHLY CHECKBOXES
+  // ==================================================
+
+  const monthHeading =
+    document.createElement(
+      "div"
+    );
+
+
+  monthHeading.textContent =
+    "Months";
+
+
+  monthHeading.style.fontWeight =
+    "600";
+
+
+  monthHeading.style.margin =
+    "10px 0 4px 0";
+
+
+  planetContent.appendChild(
+    monthHeading
+  );
+
+
+  // --------------------------------------------------
+  // MONTHS DISPLAYED IN REVERSE ORDER
+  //
+  // This only reverses the list in the UI.
+  // The underlying Planet layer order and slider
+  // order remain unchanged.
+  // --------------------------------------------------
+
+  [
+    ...planetLayers
+  ].reverse().forEach(
+    (
+      imageryLayer: any
+    ) => {
+
+      const index =
+        planetLayers.indexOf(
+          imageryLayer
+        );
+
+
+      const row =
+        document.createElement(
+          "label"
+        );
+
+
+      row.className =
+        "planet-month-toggle";
+
+
+      row.style.display =
+        "flex";
+
+
+      row.style.alignItems =
+        "center";
+
+
+      row.style.gap =
+        "6px";
+
+
+      row.style.cursor =
+        "pointer";
+
+
+      row.style.margin =
+        "2px 0";
+
+
+      const checkbox =
+        document.createElement(
+          "input"
+        );
+
+
+      checkbox.type =
+        "checkbox";
+
+
+      checkbox.dataset.planetIndex =
+        String(
+          index
+        );
+
+
+      checkbox.checked =
+        imageryLayer.visible;
+
+
+      const text =
+        document.createElement(
+          "span"
+        );
+
+
+      text.textContent =
+        imageryLayer.title.replace(
+          "Planet - ",
+          ""
+        );
+
+
+      row.appendChild(
+        checkbox
+      );
+
+
+      row.appendChild(
+        text
+      );
+
+
+      planetContent.appendChild(
+        row
+      );
+
+
+      // --------------------------------------------
+      // MANUAL MONTH TOGGLE
+      // --------------------------------------------
+
+      checkbox.addEventListener(
+        "change",
+        () => {
+
+          imageryLayer.visible =
+            checkbox.checked;
+
+
+          // If manually enabling a month,
+          // make sure the Planet group is visible.
+
+          if (
+            checkbox.checked
+          ) {
+
+            planetGroup.visible =
+              true;
+
+
+            planetCheckbox.checked =
+              true;
+
+
+            selectedMonthLabel.textContent =
+              getPlanetMonthName(
+                planetLayers,
+                index
+              );
+
+
+            slider.value =
+              String(
+                index
+              );
+
+          }
+
+
+          // If everything is turned off,
+          // turn off the group as well.
+
+          const anyVisible =
+            planetLayers.some(
+              (
+                layer: any
+              ) => layer.visible
+            );
+
+
+          if (
+            !anyVisible
+          ) {
+
+            planetGroup.visible =
+              false;
+
+
+            planetCheckbox.checked =
+              false;
+
+          }
+
+        }
+      );
+
+    }
+  );
+
+}
+
+
+// ==================================================
+// GET PLANET MONTH NAME
+// ==================================================
+
+function getPlanetMonthName(
+  layers: any[],
+  index: number
+): string {
+
+  if (
+    !layers.length
+  ) {
+
+    return "";
+
+  }
+
+
+  const safeIndex =
+    Math.max(
+      0,
+      Math.min(
+        index,
+        layers.length - 1
+      )
+    );
+
+
+  return layers[
+    safeIndex
+  ].title.replace(
+    "Planet - ",
+    ""
+  );
+
+}
+
+
+// ==================================================
+// GET CURRENTLY VISIBLE PLANET INDEX
+// ==================================================
+
+function getVisiblePlanetIndex(
+  layers: any[]
+): number {
+
+  const index =
+    layers.findIndex(
+      (
+        layer: any
+      ) => layer.visible
+    );
+
+
+  if (
+    index >= 0
+  ) {
+
+    return index;
+
+  }
+
+
+  // Default to newest month
+
+  return Math.max(
+    layers.length - 1,
+    0
+  );
+
+}
+
+
+// ==================================================
+// UPDATE PLANET MONTH CHECKBOXES
+// ==================================================
+
+function updatePlanetMonthCheckboxes(
+  container: HTMLElement,
+  layers: any[]
+) {
+
+  const checkboxes =
+    container.querySelectorAll(
+      'input[data-planet-index]'
+    );
+
+
+  checkboxes.forEach(
+    (
+      checkboxElement
+    ) => {
+
+      const checkbox =
+        checkboxElement as HTMLInputElement;
+
+
+      const index =
+        Number(
+          checkbox.dataset.planetIndex
+        );
+
+
+      checkbox.checked =
+        Boolean(
+          layers[index]?.visible
+        );
+
+    }
+  );
 
 }
 
@@ -589,6 +1406,7 @@ async function buildPointTable() {
       "pointList element not found."
     );
 
+
     return;
 
   }
@@ -609,6 +1427,7 @@ async function buildPointTable() {
       </p>
 
     `;
+
 
     return;
 
@@ -867,7 +1686,7 @@ function createPointRow(
 
         console.error(
           "Failed to select point:",
-          error
+      error
         );
 
       }
@@ -1480,6 +2299,7 @@ function addEditor() {
     console.warn(
       "No fields layer is currently loaded."
     );
+
 
     return;
 

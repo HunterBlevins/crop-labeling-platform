@@ -242,7 +242,7 @@ export const COUNTRIES:
 
         {
           name:
-            "Venezuela Agricultural Season",
+            "Ecuador Agricultural Season",
 
           start:
             "2023-10-01",

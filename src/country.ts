@@ -1,9 +1,21 @@
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
+import GroupLayer from "@arcgis/core/layers/GroupLayer";
 
-import { map, view, currentLayers } from "./map";
-import { COUNTRIES } from "./config";
-import { PLANET_MOSAICS } from "./planetmosaics";
+import {
+  map,
+  view,
+  currentLayers
+} from "./map";
+
+import {
+  COUNTRIES
+} from "./config";
+
+import {
+  PLANET_MOSAICS
+} from "./planetmosaics";
+
 
 const PLANET_API_KEY =
   import.meta.env.VITE_PLANET_API_KEY;
@@ -17,7 +29,9 @@ export async function loadCountry(
     COUNTRIES[countryKey];
 
 
-  if (!config) {
+  if (
+    !config
+  ) {
 
     throw new Error(
       `Unknown country: ${countryKey}`
@@ -37,11 +51,29 @@ export async function loadCountry(
 
   map.removeAll();
 
-  currentLayers.fields = null;
 
-  currentLayers.points = null;
+  currentLayers.fields =
+    null;
 
-  currentLayers.imagery = [];
+
+  currentLayers.points =
+    null;
+
+
+  currentLayers.imagery =
+    [];
+
+
+  currentLayers.planetGroup =
+    null;
+
+
+  currentLayers.planetLayers =
+    [];
+
+
+  currentLayers.waybackLayers =
+    [];
 
 
   // ============================================================
@@ -222,7 +254,9 @@ export async function loadCountry(
     WebTileLayer[] = [];
 
 
-  if (!PLANET_API_KEY) {
+  if (
+    !PLANET_API_KEY
+  ) {
 
     console.warn(
       "VITE_PLANET_API_KEY is not configured."
@@ -236,8 +270,7 @@ export async function loadCountry(
   ) {
 
     // ----------------------------------------------------------
-    // Only use Planet mosaics that fall within one of the
-    // country's configured imagery seasons.
+    // FIND PLANET MOSAICS WITHIN COUNTRY SEASONS
     // ----------------------------------------------------------
 
     const allowedMosaics =
@@ -269,7 +302,7 @@ export async function loadCountry(
 
 
     // ----------------------------------------------------------
-    // Create one WebTileLayer for each allowed month.
+    // CREATE MONTHLY PLANET LAYERS
     // ----------------------------------------------------------
 
     for (
@@ -323,6 +356,45 @@ export async function loadCountry(
 
 
   // ============================================================
+  // CREATE PLANET GROUP LAYER
+  // ============================================================
+
+  let planetGroup:
+    GroupLayer | null = null;
+
+
+  if (
+    planetLayers.length > 0
+  ) {
+
+    planetGroup =
+      new GroupLayer({
+
+        title:
+          "Planet Monthly Imagery",
+
+        visible:
+          false,
+
+        visibilityMode:
+          "independent"
+
+      });
+
+
+    planetGroup.addMany(
+      planetLayers
+    );
+
+
+    console.log(
+      "Planet GroupLayer created."
+    );
+
+  }
+
+
+  // ============================================================
   // WAYBACK IMAGERY
   // ============================================================
 
@@ -369,8 +441,20 @@ export async function loadCountry(
 
 
   // ============================================================
-  // STORE IMAGERY LAYERS
+  // STORE IMAGERY REFERENCES
   // ============================================================
+
+  currentLayers.planetGroup =
+    planetGroup;
+
+
+  currentLayers.planetLayers =
+    planetLayers;
+
+
+  currentLayers.waybackLayers =
+    waybackLayers;
+
 
   currentLayers.imagery = [
 
@@ -382,23 +466,23 @@ export async function loadCountry(
 
 
   // ============================================================
-  // ADD IMAGERY TO MAP
+  // ADD PLANET GROUP TO MAP
   // ============================================================
 
-  // Older Planet layers are added first.
-  // Newer Planet layers are added later.
-  // Wayback is added after Planet imagery.
-
-  for (
-    const layer of planetLayers
+  if (
+    planetGroup
   ) {
 
     map.add(
-      layer
+      planetGroup
     );
 
   }
 
+
+  // ============================================================
+  // ADD WAYBACK IMAGERY
+  // ============================================================
 
   for (
     const layer of waybackLayers
@@ -419,17 +503,19 @@ export async function loadCountry(
     fieldsLayer
   );
 
+
   map.add(
     pointsLayer
   );
 
 
   // ============================================================
-  // SAVE REFERENCES
+  // SAVE VECTOR REFERENCES
   // ============================================================
 
   currentLayers.fields =
     fieldsLayer;
+
 
   currentLayers.points =
     pointsLayer;
@@ -443,7 +529,9 @@ export async function loadCountry(
     "Loading fields layer..."
   );
 
+
   await fieldsLayer.load();
+
 
   console.log(
     "Fields layer loaded."
@@ -454,7 +542,9 @@ export async function loadCountry(
     "Loading points layer..."
   );
 
+
   await pointsLayer.load();
+
 
   console.log(
     "Points layer loaded."
@@ -546,6 +636,8 @@ export async function loadCountry(
     fieldsLayer,
 
     pointsLayer,
+
+    planetGroup,
 
     planetLayers,
 
